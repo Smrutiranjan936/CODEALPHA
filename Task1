@@ -1,0 +1,35 @@
+import java.util.ArrayList;
+import java.util.Scanner;
+import java.util.Collections;
+
+class GradeCalculator
+{
+    public static void main(String[] args) 
+    {
+        ArrayList<Double> grades = new ArrayList<>();
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Enter the number of students: ");
+        int numStudents = scanner.nextInt();
+        for (int i = 0; i < numStudents; i++) {
+            System.out.print("Enter the grade for student " + (i + 1) + ": ");
+            double grade = scanner.nextDouble();
+            grades.add(grade);
+        }
+        double average = calculateAverage(grades);
+        double highest = Collections.max(grades);
+        double lowest = Collections.min(grades);
+        System.out.println("\nGrade Summary:");
+        System.out.println("Average grade: " + average);
+        System.out.println("Highest grade: " + highest);
+        System.out.println("Lowest grade: " + lowest);
+        scanner.close();
+    }
+    private static double calculateAverage(ArrayList<Double> grades)
+    {
+        double sum = 0;
+        for (double grade : grades) {
+            sum += grade;
+        }
+        return sum / grades.size();
+    }
+}
