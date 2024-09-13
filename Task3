@@ -1,0 +1,224 @@
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Scanner;
+class Room
+{
+    int roomId;
+    String roomType;
+    double price;
+    boolean isAvailable;
+
+    public Room(int roomId, String roomType, double price, boolean isAvailable)
+    {
+        this.roomId = roomId;
+        this.roomType = roomType;
+        this.price = price;
+        this.isAvailable = isAvailable;
+    }
+
+    public boolean isAvailable()
+    {
+        return isAvailable;
+    }
+    public void setAvailable(boolean available)
+    {
+        isAvailable = available;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Room ID: " + roomId + ", Type: " + roomType + ", Price: $" + price + ", Available: " + isAvailable;
+    }
+}
+class User
+{
+    String name;
+    String email;
+    int phone;
+
+    public User(String name, String email, int phone)
+    {
+        this.name = name;
+        this.email = email;
+        this.phone = phone;
+    }
+}
+class Reservation
+{
+    Room room;
+    User user;
+    Date checkInDate;
+    Date checkOutDate;
+    double totalAmount;
+
+    public Reservation(Room room, User user, Date checkInDate, Date checkOutDate, double totalAmount)
+    {
+        this.room = room;
+        this.user = user;
+        this.checkInDate = checkInDate;
+        this.checkOutDate = checkOutDate;
+        this.totalAmount = totalAmount;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Reservation Details: \nUser: " + user.name + "\nRoom: " + room.roomType + "\nTotal: $" + totalAmount;
+    }
+}
+class Payment
+{
+    public static boolean processPayment(double amount)
+    {
+        System.out.println("Processing payment of $" + amount + "...");
+        return true;
+    }
+}
+class HotelReservationSystem
+{
+    static List<Room> roomList = new ArrayList<>();
+    static List<Reservation> reservations = new ArrayList<>();
+
+    public static void main(String[] args)
+    {
+        Scanner scanner = new Scanner(System.in);
+        initializeRooms();
+
+        System.out.println("Welcome to Hotel Reservation System!");
+
+        boolean running = true;
+        while (running)
+        {
+            System.out.println("Choose an option:");
+            System.out.println("1. Search for available rooms");
+            System.out.println("2. Make a reservation");
+            System.out.println("3. View your booking details");
+            System.out.println("4. Exit");
+
+            int choice = scanner.nextInt();
+            switch (choice)
+            {
+                case 1:
+                    searchRooms();
+                    break;
+                case 2:
+                    makeReservation(scanner);
+                    break;
+                case 3:
+                    viewBookings();
+                    break;
+                case 4:
+                    running = false;
+                    System.out.println("Thank you for using the Hotel Reservation System!");
+                    break;
+                default:
+                    System.out.println("Invalid option, please try again.");
+            }
+        }
+
+        scanner.close();
+    }
+    public static void initializeRooms()
+    {
+        roomList.add(new Room(101, " Room-only hotel rooms", 100.0, true));
+        roomList.add(new Room(102, "Standard hotel rooms", 150.0, true));
+        roomList.add(new Room(103, "Minimalist hotel rooms", 200.0, true));
+        roomList.add(new Room(104,"Deluxe hotel rooms",300.0,true));
+        roomList.add(new Room(105,"Studio hotel rooms",500.0,true));
+        roomList.add(new Room(106,"Connecting rooms",520.0,true));
+        roomList.add(new Room(107,"Suites",600.0,true));
+        roomList.add(new Room(108,"Standard suite rooms",600.0,true));
+        roomList.add(new Room(109,"Junior suites",650.0,true));
+        roomList.add(new Room(110,"Presidential suites",1000.0,true));
+        roomList.add(new Room(111," Penthouse suites",700.0,true));
+        roomList.add(new Room(112,"Honeymoon suites",800.0,true));
+        roomList.add(new Room(113,"Bridal suites",800.0,true));
+    }
+    public static void searchRooms()
+    {
+        System.out.println("Available rooms:");
+        for (Room room : roomList)
+        {
+            if (room.isAvailable())
+            {
+                System.out.println(room);
+            }
+        }
+    }
+    public static void makeReservation(Scanner scanner)
+    {
+        System.out.println("Enter your details:");
+
+        System.out.print("Name: ");
+        String name = scanner.next();
+        System.out.print("Email: ");
+        String email = scanner.next();
+        System.out.print("Phone: ");
+        int phone = scanner.nextInt();
+
+        User user = new User(name, email, phone);
+
+        System.out.print("Enter Room ID to book: ");
+        int roomId = scanner.nextInt();
+
+        Room selectedRoom = null;
+        for (Room room : roomList)
+        {
+            if (room.roomId == roomId && room.isAvailable())
+            {
+                selectedRoom = room;
+                break;
+            }
+        }
+        if (selectedRoom != null)
+        {
+            System.out.print("Enter check-in date (dd-MM-yyyy): ");
+            Date checkInDate = new Date();
+            System.out.print("Enter check-out date (dd-MM-yyyy): ");
+            Date checkOutDate = new Date();
+
+            double totalAmount = selectedRoom.price;
+
+            System.out.println("Total Amount: $" + totalAmount);
+            System.out.print("Proceed with payment (yes/no)? ");
+            String paymentDecision = scanner.next();
+
+            if (paymentDecision.equalsIgnoreCase("yes"))
+            {
+                if (Payment.processPayment(totalAmount))
+                {
+                    selectedRoom.setAvailable(false);
+                    Reservation reservation = new Reservation(selectedRoom, user, checkInDate, checkOutDate, totalAmount);
+                    reservations.add(reservation);
+                    System.out.println("Reservation successful!");
+                    System.out.println(reservation);
+                }
+            }
+            else
+            {
+                System.out.println("Payment not completed. Reservation canceled.");
+            }
+        }
+        else
+        {
+            System.out.println("Room not available or invalid room ID.");
+        }
+    }
+    public static void viewBookings()
+    {
+        if (reservations.isEmpty())
+        {
+            System.out.println("No reservations found.");
+        }
+        else
+        {
+            System.out.println("Your reservations:");
+            for (Reservation reservation : reservations)
+            {
+                System.out.println(reservation);
+            }
+        }
+    }
+}
